@@ -1,0 +1,81 @@
+# AI Kiosk Bot Configuration
+
+# Camera Settings
+camera:
+  device_id: 0  # IMX477 camera
+  resolution:
+    width: 640
+    height: 480
+  fps: 30
+  detection_zone:  # Zone where person detection triggers bot
+    x: 160  # Left boundary (pixels)
+    y: 120  # Top boundary
+    width: 320
+    height: 240
+
+# Person Detection
+person_detection:
+  model: "yolov8n.pt"  # Lightweight YOLOv8 nano for Jetson Nano
+  confidence_threshold: 0.5
+  cooldown_seconds: 3  # Avoid multiple triggers
+  enable: true
+
+# Wake Word Detection
+wake_word:
+  keyword: "hi uetbot"
+  sensitivity: 0.5
+  timeout: 5  # seconds to wait for wake word
+  enable: true
+
+# Speech-to-Text (STT)
+stt:
+  engine: "vosk"  # vosk (offline, fast) or google (online)
+  model_path: "models/vosk-model-small-vi-0.4"  # Vietnamese model
+  language: "vi-VN"
+  sample_rate: 16000
+  silence_duration: 1.5  # seconds of silence to end recording
+
+# LLM (Gemini)
+llm:
+  provider: "gemini"
+  model: "gemini-pro"
+  api_key_env: "GEMINI_API_KEY"  # Set in .env file
+  temperature: 0.7
+  max_tokens: 150
+  system_prompt: "Bạn là UETBot, một trợ lý AI thân thiện tại Đại học Công nghệ - ĐHQGHN. Hãy trả lời ngắn gọn, thân thiện và hữu ích."
+
+# Text-to-Speech (TTS)
+tts:
+  engine: "pyttsx3"  # pyttsx3 (offline, fast) or gtts (online)
+  language: "vi"
+  rate: 150  # speaking rate
+  volume: 0.9
+
+# Face Display
+face:
+  window_width: 800
+  window_height: 600
+  fullscreen: false
+  fps: 30
+  emotions:
+    - idle
+    - listening
+    - thinking
+    - speaking
+    - happy
+    - surprised
+
+# Audio
+audio:
+  microphone_index: null  # null = default microphone
+  speaker_index: null  # null = default speaker
+  chunk_size: 1024
+  channels: 1
+  sample_rate: 16000
+
+# General
+general:
+  debug: true
+  log_level: "INFO"
+  conversation_timeout: 30  # seconds of inactivity to return to idle
+
