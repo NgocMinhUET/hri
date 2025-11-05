@@ -1,0 +1,39 @@
+# Requirements optimized for NVIDIA Jetson Nano (ARM64)
+# Use this file if requirements.txt has conflicts on Jetson
+
+# Core Dependencies
+numpy>=1.22.2  # Required by ultralytics
+opencv-python>=4.8.0  # System OpenCV may be available
+Pillow>=9.5.0
+
+# Deep Learning & Computer Vision
+# Note: PyTorch must be installed separately using NVIDIA wheel
+# torch==1.13.0  # Install from: https://nvidia.box.com/shared/static/ssf2v7pf5i245fk4i0q926hy4imzs2ph.whl
+# torchvision==0.14.0  # Install after PyTorch
+ultralytics>=8.0.0  # YOLOv8 for person detection
+
+# Audio Processing
+pyaudio>=0.2.13
+pydub>=0.25.1
+webrtcvad>=2.0.10  # Voice Activity Detection
+librosa>=0.10.0
+
+# Speech Recognition (STT)
+vosk>=0.3.45  # Offline STT, very fast
+SpeechRecognition>=3.10.0
+
+# Text-to-Speech (TTS)
+pyttsx3>=2.90  # Offline TTS, fast
+gTTS>=2.4.0  # Google TTS (backup option)
+
+# LLM Integration
+google-generativeai>=0.3.1  # Gemini API
+requests>=2.31.0
+
+# GUI for Face Display
+pygame>=2.5.2
+
+# Utilities
+python-dotenv>=1.0.0
+pyyaml>=6.0.1
+
