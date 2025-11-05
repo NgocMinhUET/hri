@@ -154,12 +154,16 @@ def test_vosk():
     
     try:
         from vosk import Model
+        from utils.config_loader import get_config
         import os
         
-        model_path = "models/vosk-model-small-vi-0.4"
+        # Đọc model_path từ config thay vì hardcode
+        config = get_config()
+        model_path = config.get('stt.model_path', 'models/vosk-model-small-vn-0.4')
         
         if not os.path.exists(model_path):
             print_error(f"Vosk model không tồn tại: {model_path}")
+            print_info(f"Kiểm tra config.yaml: stt.model_path = {model_path}")
             print_info("Tải tại: https://alphacephei.com/vosk/models")
             return False
         
