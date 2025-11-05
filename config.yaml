@@ -30,7 +30,7 @@ wake_word:
 # Speech-to-Text (STT)
 stt:
   engine: "vosk"  # vosk (offline, fast) or google (online)
-  model_path: "models/vosk-model-small-vi-0.4"  # Vietnamese model
+  model_path: "models/vosk-model-small-vn-0.4"  # Vietnamese model (vn-0.4)
   language: "vi-VN"
   sample_rate: 16000
   silence_duration: 1.5  # seconds of silence to end recording

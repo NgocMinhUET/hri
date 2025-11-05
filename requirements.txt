@@ -1,5 +1,5 @@
 # Core Dependencies
-numpy>=1.22.2  # Updated for ultralytics compatibility
+numpy>=1.22.2,<2.0  # Must be < 2.0 for opencv/ultralytics compatibility
 opencv-python==4.8.0.74
 Pillow==9.5.0
 

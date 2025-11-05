@@ -13,7 +13,10 @@ Pillow>=9.5.0
 ultralytics>=8.0.0  # YOLOv8 for person detection
 
 # Audio Processing
-pyaudio>=0.2.13
+# NOTE: PyAudio requires system dependencies first:
+#   sudo apt install -y portaudio19-dev python3-dev build-essential
+#   Then: pip install pyaudio>=0.2.13
+pyaudio>=0.2.13  # Install after system dependencies (see INSTALL_PYAUDIO_JETSON.md)
 pydub>=0.25.1
 webrtcvad>=2.0.10  # Voice Activity Detection
 librosa>=0.10.0
