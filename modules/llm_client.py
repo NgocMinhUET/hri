@@ -22,7 +22,7 @@ class LLMClient:
         if not api_key:
             raise ValueError("Chưa cấu hình GEMINI_API_KEY! Hãy thêm vào file .env")
         
-        self.model_name = self.config.get('llm.model', 'gemini-pro')
+        self.model_name = self.config.get('llm.model', 'gemini-1.5-flash')
         self.temperature = self.config.get('llm.temperature', 0.7)
         self.max_tokens = self.config.get('llm.max_tokens', 150)
         self.system_prompt = self.config.get('llm.system_prompt', '')

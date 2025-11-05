@@ -38,7 +38,7 @@ stt:
 # LLM (Gemini)
 llm:
   provider: "gemini"
-  model: "gemini-pro"
+  model: "gemini-1.5-flash"  # Updated: gemini-pro deprecated, using gemini-1.5-flash (faster for kiosk)
   api_key_env: "GEMINI_API_KEY"  # Set in .env file
   temperature: 0.7
   max_tokens: 150

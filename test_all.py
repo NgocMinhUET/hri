@@ -237,9 +237,12 @@ def test_gemini_api():
             return False
         
         genai.configure(api_key=api_key)
-        model = genai.GenerativeModel('gemini-pro')
         
-        print_info("Đang test API...")
+        # Đọc model name từ config thay vì hardcode
+        model_name = config.get('llm.model', 'gemini-1.5-flash')
+        model = genai.GenerativeModel(model_name)
+        
+        print_info(f"Đang test API với model: {model_name}...")
         response = model.generate_content("Say hello in Vietnamese")
         
         print_success("Gemini API hoạt động!")
