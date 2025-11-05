@@ -59,15 +59,34 @@ class PersonDetector:
         self.logger.info(f"Đang khởi động camera {self.camera_id}...")
         self.cap = cv2.VideoCapture(self.camera_id)
         
-        # Set resolution
+        if not self.cap.isOpened():
+            self.logger.error(f"Không thể mở camera {self.camera_id}")
+            self.logger.error("Hãy chạy: python test_camera.py để tìm device ID đúng")
+            raise RuntimeError(f"Không thể mở camera {self.camera_id}")
+        
+        # Set resolution (sau khi mở thành công)
         self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, self.resolution[0])
         self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, self.resolution[1])
         self.cap.set(cv2.CAP_PROP_FPS, self.fps)
         
-        if not self.cap.isOpened():
-            raise RuntimeError(f"Không thể mở camera {self.camera_id}")
+        # Kiểm tra thực tế resolution đã set
+        actual_width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        actual_height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        actual_fps = self.cap.get(cv2.CAP_PROP_FPS)
         
-        self.logger.info("Camera đã sẵn sàng!")
+        self.logger.info(f"Camera đã sẵn sàng! Resolution: {actual_width}x{actual_height} @ {actual_fps:.1f}fps")
+        
+        # Test đọc frame đầu tiên
+        ret, test_frame = self.cap.read()
+        if not ret:
+            self.logger.warning("Cảnh báo: Camera mở được nhưng chưa đọc được frame. Đợi vài giây...")
+            import time
+            time.sleep(2)
+            ret, test_frame = self.cap.read()
+            if ret:
+                self.logger.info("✅ Camera đã sẵn sàng sau khi đợi!")
+            else:
+                self.logger.error("❌ Vẫn không đọc được frame. Kiểm tra camera!")
     
     def stop_camera(self):
         """Dừng camera"""
@@ -95,7 +114,12 @@ class PersonDetector:
         # Đọc frame
         ret, frame = self.cap.read()
         if not ret:
-            self.logger.error("Không thể đọc frame từ camera!")
+            self.logger.error(f"Không thể đọc frame từ camera {self.camera_id}!")
+            self.logger.error("Có thể do:")
+            self.logger.error("  1. Camera device ID sai (kiểm tra: python test_camera.py)")
+            self.logger.error("  2. Camera đang bị process khác sử dụng")
+            self.logger.error("  3. Camera cần thời gian khởi động (thử đợi vài giây)")
+            self.logger.error("  4. Permissions (thử: sudo chmod 666 /dev/video*)")
             return False
         
         # Run detection
