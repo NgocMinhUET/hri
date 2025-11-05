@@ -238,15 +238,79 @@ def test_gemini_api():
         
         genai.configure(api_key=api_key)
         
-        # Đọc model name từ config thay vì hardcode
-        model_name = config.get('llm.model', 'gemini-1.5-flash')
-        model = genai.GenerativeModel(model_name)
+        # Thử list available models trước
+        print_info("Đang lấy danh sách models có sẵn...")
+        available_models = []
+        try:
+            models = genai.list_models()
+            for m in models:
+                if 'generateContent' in m.supported_generation_methods:
+                    model_name_short = m.name.split('/')[-1] if '/' in m.name else m.name
+                    available_models.append(model_name_short)
+            if available_models:
+                print_info(f"Models có sẵn: {', '.join(available_models[:5])}...")
+        except Exception as e:
+            print_warning(f"Không thể list models: {e}")
         
-        print_info(f"Đang test API với model: {model_name}...")
+        # Danh sách model names để thử (theo thứ tự ưu tiên)
+        model_names_to_try = [
+            config.get('llm.model', 'gemini-1.5-flash'),  # Model từ config
+            'gemini-1.5-flash-latest',
+            'gemini-1.5-flash-001',
+            'gemini-1.5-pro-latest',
+            'gemini-1.5-pro-001',
+            'gemini-pro',
+            'gemini-2.0-flash-exp',
+        ]
+        
+        # Thêm các models từ available_models nếu có
+        for avail_model in available_models[:3]:  # Thử 3 models đầu tiên
+            if avail_model not in model_names_to_try:
+                model_names_to_try.append(avail_model)
+        
+        model = None
+        working_model = None
+        
+        # Thử từng model
+        for model_name in model_names_to_try:
+            try:
+                print_info(f"Thử model: {model_name}...")
+                test_model = genai.GenerativeModel(model_name)
+                response = test_model.generate_content("Hello")
+                # Nếu đến đây thì model hoạt động
+                model = test_model
+                working_model = model_name
+                print_success(f"✅ Model {model_name} hoạt động!")
+                break
+            except Exception as e:
+                error_msg = str(e)[:80]
+                if "404" in error_msg or "not found" in error_msg.lower():
+                    continue  # Model không tồn tại, thử model tiếp theo
+                else:
+                    # Lỗi khác (có thể là API key hoặc network)
+                    print_warning(f"Lỗi với {model_name}: {error_msg}")
+                    raise  # Re-raise để xử lý ở ngoài
+        
+        if not model:
+            print_error("Không tìm thấy model nào hoạt động")
+            print_info("Các models đã thử: " + ", ".join(model_names_to_try[:5]))
+            print_info("Kiểm tra API key tại: https://makersuite.google.com/app/apikey")
+            return False
+        
+        # Test với model đã tìm được
+        print_info(f"Đang test với model: {working_model}...")
         response = model.generate_content("Say hello in Vietnamese")
         
         print_success("Gemini API hoạt động!")
+        print_info(f"Model sử dụng: {working_model}")
         print_info(f"Response: {response.text[:100]}...")
+        
+        # Cảnh báo nếu model khác với config
+        config_model = config.get('llm.model', 'gemini-1.5-flash')
+        if working_model != config_model:
+            print_warning(f"Model trong config ({config_model}) không hoạt động")
+            print_info(f"Đề xuất cập nhật config.yaml: model: \"{working_model}\"")
+        
         return True
         
     except Exception as e:
